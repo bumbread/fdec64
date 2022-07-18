@@ -1,4 +1,1 @@
-bazel-*
-/.eclipse-bin/
-/.project
-.vscode/
+*.lib

@@ -18,7 +18,7 @@
 // Runtime compiler options:
 // -DRYU_DEBUG Generate verbose debugging output to stdout.
 
-#include "ryu/ryu_generic_128.h"
+#include <ryu_generic_128.h>
 
 #include <assert.h>
 #include <stdbool.h>
@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ryu/generic_128.h"
+#include <generic_128.h>
 
 #ifdef RYU_DEBUG
 #include <inttypes.h>

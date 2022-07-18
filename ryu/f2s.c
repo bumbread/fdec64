@@ -18,7 +18,7 @@
 // Runtime compiler options:
 // -DRYU_DEBUG Generate verbose debugging output to stdout.
 
-#include "ryu/ryu.h"
+#include <ryu.h>
 
 #include <assert.h>
 #include <stdbool.h>
@@ -31,9 +31,9 @@
 #include <stdio.h>
 #endif
 
-#include "ryu/common.h"
-#include "ryu/f2s_intrinsics.h"
-#include "ryu/digit_table.h"
+#include <common.h>
+#include <f2s_intrinsics.h>
+#include <digit_table.h>
 
 #define FLOAT_MANTISSA_BITS 23
 #define FLOAT_EXPONENT_BITS 8

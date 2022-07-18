@@ -15,7 +15,7 @@
 // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 // KIND, either express or implied.
 
-#include "ryu/ryu_parse.h"
+#include <ryu_parse.h>
 
 #include <assert.h>
 #include <stdbool.h>
@@ -28,8 +28,8 @@
 #include <stdio.h>
 #endif
 
-#include "ryu/common.h"
-#include "ryu/f2s_intrinsics.h"
+#include <common.h>
+#include <f2s_intrinsics.h>
 
 #define FLOAT_MANTISSA_BITS 23
 #define FLOAT_EXPONENT_BITS 8

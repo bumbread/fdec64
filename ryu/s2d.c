@@ -15,7 +15,7 @@
 // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 // KIND, either express or implied.
 
-#include "ryu/ryu_parse.h"
+#include <ryu_parse.h>
 
 #include <assert.h>
 #include <stdbool.h>
@@ -28,13 +28,13 @@
 #include <stdio.h>
 #endif
 
-#include "ryu/common.h"
-#include "ryu/d2s_intrinsics.h"
+#include <common.h>
+#include <d2s_intrinsics.h>
 
 #if defined(RYU_OPTIMIZE_SIZE)
-#include "ryu/d2s_small_table.h"
+#include <d2s_small_table.h>
 #else
-#include "ryu/d2s_full_table.h"
+#include <d2s_full_table.h>
 #endif
 
 #define DOUBLE_MANTISSA_BITS 52
@@ -46,7 +46,7 @@
 
 static inline uint32_t floor_log2(const uint64_t value) {
   long index;
-  return _BitScanReverse64(&index, value) ? index : 64;
+  return _BitScanReverse64((unsigned long *)&index, value) ? index : 64;
 }
 
 #else

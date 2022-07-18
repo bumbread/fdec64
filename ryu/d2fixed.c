@@ -23,7 +23,7 @@
 //
 // -DRYU_AVOID_UINT128 Avoid using uint128_t. Slower, depending on your compiler.
 
-#include "ryu/ryu.h"
+#include <ryu.h>
 
 #include <assert.h>
 #include <stdbool.h>
@@ -36,10 +36,10 @@
 #include <stdio.h>
 #endif
 
-#include "ryu/common.h"
-#include "ryu/digit_table.h"
-#include "ryu/d2fixed_full_table.h"
-#include "ryu/d2s_intrinsics.h"
+#include <common.h>
+#include <digit_table.h>
+#include <d2fixed_full_table.h>
+#include <d2s_intrinsics.h>
 
 #define DOUBLE_MANTISSA_BITS 52
 #define DOUBLE_EXPONENT_BITS 11

@@ -1,0 +1,144 @@
+
+RYU
+
+This project contains routines to convert IEEE-754 floating-point numbers to
+decimal strings using shortest, fixed `%f`, and scientific `%e`
+formatting. The primary implementation is in C, and there is a port of the
+shortest conversion to Java. All algorithms have been published in
+peer-reviewed publications. At the time of this writing, these are the fastest
+known float-to-string conversion algorithms. The fixed, and scientific
+conversion routines are several times faster than the usual implementations
+of sprintf (we compared against glibc, Apple's libc, MSVC, and others).
+
+Generating scientific and fixed output format for 16 and 32 bit IEEE floating
+point numbers can be implemented by converting to 64 bit, and then using the
+64 bit routines. Note that there is no 128 bit implementation at this time.
+
+When converting to shortest, DO NOT CAST; shortest conversion is based on the
+precision of the source type, and casting to a different type will not return
+the expected output. There are highly optimized 32 and 64 bit implementations
+as well as a generic 128 bit implementation that can handle any IEEE format
+up to 128 bits.
+
+These are the supported conversion modes for the C implementation:
+
+| IEEE Type            | Supported Output Formats         |
+| -------------------- | -------------------------------- |
+| 16 Bit (half)        | Shortest (via ryu_generic_128.h) |
+| 32 Bit (float)       | Shortest                         |
+| 64 Bit (double)      | Shortest, Scientific, Fixed      |
+| 80 Bit (long double) | Shortest (via ryu_generic_128.h) |
+| 128 Bit (__float128) | Shortest (via ryu_generic_128.h) |
+
+The code is continuously tested on Ubuntu 18.04, MacOS High Sierra, and Windows
+Server version 1803.
+
+All contributions are required to maintain these licenses.
+
+-------------------------------------------------------------------------------
+RYU
+-------------------------------------------------------------------------------
+
+Ryu generates the shortest decimal representation of a floating point number
+that maintains round-trip safety. That is, a correct parser can recover the
+exact original number. For example, consider the binary 32-bit floating point
+number `00111110100110011001100110011010`. The stored value is exactly
+`0.300000011920928955078125`. However, this floating point number is also
+the closest number to the decimal number `0.3`, so that is what Ryu
+outputs.
+
+This problem of generating the shortest possible representation was originally
+posed by White and Steele [1], for which they described an algorithm called
+"Dragon". It was subsequently improved upon with algorithms that also had
+dragon-themed names. I followed in the same vein using the japanese word for
+dragon, Ryu. In general, all these algorithms should produce identical output
+given identical input, and this is checked when running the benchmark program.
+
+In addition, there is an experimental C implementation that can handle inputs
+of any size up to 128-bit, albeit with lower performance than the highly
+optimized 32-bit and 64-bit implementations. Furthermore, there is an
+experimental low-level C API that returns the decimal floating-point
+representation as a struct, allowing clients to implement their own formatting.
+These are still subject to change.
+
+*Note*: The Java implementation differs from the output of `Double.toString`
+[2] in some cases: sometimes the output is shorter (which is arguably more
+accurate) and sometimes the output may differ in the precise digits output
+(e.g., see https://github.com/ulfjack/ryu/issues/83).
+
+This PLDI'18 paper includes a complete correctness proof of the algorithm:
+
+  https://dl.acm.org/citation.cfm?doid=3296979.3192369
+
+[1]: https://dl.acm.org/citation.cfm?id=93559
+
+[2]: https://docs.oracle.com/javase/10/docs/api/java/lang/Double.html#toString(double)
+
+[3]: https://github.com/plokhotnyuk/jsoniter-scala/blob/6e6bb9d7bed6de341ce0b781b403eb671d008468/jsoniter-scala-core/jvm/src/main/scala/com/github/plokhotnyuk/jsoniter_scala/core/JsonWriter.scala#L1777-L2262
+
+[4]: https://github.com/scala-native/scala-native/tree/master/nativelib/src/main/scala/scala/scalanative/runtime/ieee754tostring/ryu
+
+[5]: https://github.com/libmir/mir-algorithm/tree/master/source/mir/bignum/internal/ryu
+
+-------------------------------------------------------------------------------
+RYU PRINTF
+-------------------------------------------------------------------------------
+
+Since Ryu generates the shortest decimal representation, it is not immediately
+suitable for use in languages that have printf-like facilities. In most
+implementations, printf provides three floating-point specific formatters,
+`%f`, `%e`, and `%g`:
+
+ - The `%f` format prints the full decimal part of the given floating point
+   number, and then appends as many digits of the fractional part as specified
+   using the precision parameter.
+
+ - The `%e` format prints the decimal number in scientific notation with as
+   many digits after the initial digit as specified using the precision
+   parameter.
+
+ - The `%g` format prints either `%f` or `%e` format, whichever is
+   shorter.
+
+Ryu Printf implements %f and %e formatting in a way that should be drop-in
+compatible with most implementations of printf, although it currently does not
+implement any formatting flags other than precision. The benchmark program
+verifies that the output matches exactly, and outputs a warning if not. Any
+unexpected output from the benchmark indicates a difference in output.
+
+*Note* that old versions of MSVC ship with a printf implementation that has a
+confirmed bug: it does not always round the last digit correctly.
+
+*Note* that msys cuts off the output after ~17 digits, and therefore generally
+differs from Ryu Printf output for precision values larger than 17.
+
+*Note* that the output for NaN values can differ between implementations; we use
+ifdefs in an attempt to match platform output.
+
+According to our benchmarks, Ryu Printf compares favorably with the following
+implementations of printf for precision parameters 1, 10, 100, and 1000:
+
+| OS                   | Libc                        | Ryu Printf is faster by |
+|----------------------|-----------------------------|-------------------------|
+| Ubuntu 18.04         | libc6 2.27-3ubuntu1         | 15x                     |
+| Ubuntu 18.04         | musl 1.1.19-1               | 4x                      |
+| Windows 10 Home 1803 | MSVC 19.14.26429.4          | 9x                      |
+| Windows 10 Home 1803 | msys-runtime-devel 2.10.0-2 | between 8x and 20x      |
+| macOS Mojave 10.14   | Apple Libc                  | 24x                     |
+
+In addition, Ryu Printf has a more predictable performance profile. In theory,
+an implementation that performs particularly badly for some subset of numbers
+could be exploited as a denial-of-service attack vector.
+
+My OOPSLA'2019 paper provides a correctness proof:
+https://dl.acm.org/citation.cfm?doid=3366395.3360595
+
+
+-------------------------------------------------------------------------------
+BUILDING
+-------------------------------------------------------------------------------
+
+To build run:
+
+  $ py bake.py
+
