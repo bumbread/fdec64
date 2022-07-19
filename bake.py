@@ -7,7 +7,7 @@ import subprocess
 platform = 'win'
 
 definitions = []
-inc_folders = ['ryu']
+inc_folders = ['.']
 
 
 # Compiler-specific options
@@ -33,7 +33,7 @@ def compile(root, cmap):
                 func(file_path)
 
 def get_bin_path(file_path):
-    rel_path = os.path.normpath(file_path).split(os.path.sep)[1:]
+    rel_path = os.path.normpath(file_path).split(os.path.sep)[:]
     name, ext = os.path.splitext(os.path.sep.join(rel_path))
     bin_path = os.path.join('bin', name+'.obj')
     os.makedirs(os.path.dirname(bin_path), exist_ok=True)
@@ -58,11 +58,11 @@ def nasm_compile(file_name):
 # Compile the object files
 compile_map = {}
 compile_map['.c']   = clang_compile
-compile(os.path.normpath('ryu'), compile_map)
+compile(os.path.normpath('.'), compile_map)
 
 # Make an archive of all object files
 obj_paths = []
 for dir, _, f in os.walk('bin'):
     if len(f) != 0:
         obj_paths.append(os.path.join(dir, '*.obj'))
-subprocess.run(['llvm-ar', 'rc', 'ryu.lib'] + obj_paths)
+subprocess.run(['llvm-ar', 'rc', 'fdec64.lib'] + obj_paths)
