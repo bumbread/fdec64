@@ -5,3 +5,5 @@ test.c
 *.ilk
 *.obj
 *.pdb
+*.obj
+bin
