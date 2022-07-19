@@ -1,1 +1,7 @@
+ciabatta
 *.lib
+test.c
+*.exe
+*.ilk
+*.obj
+*.pdb
