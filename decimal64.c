@@ -2,8 +2,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include <fdec64.h>
-#include <fdec64_table.h>
+#include "decimal64.h"
+#include "decimal64_table.h"
 #include <intrin.h>
 
 #define DOUBLE_MANTISSA_BITS 52
@@ -139,7 +139,7 @@ static inline uint64_t div1e8(const uint64_t x) {
 
 
 
-fdec64 dtofdec64(const uint64_t ieeeMantissa, const uint32_t ieeeExponent) {
+decimal64_t dtofdec64(const uint64_t ieeeMantissa, const uint32_t ieeeExponent) {
   int32_t e2;
   uint64_t m2;
   if (ieeeExponent == 0) {
@@ -304,7 +304,7 @@ fdec64 dtofdec64(const uint64_t ieeeMantissa, const uint32_t ieeeExponent) {
   }
   const int32_t exp = e10 + removed;
 
-  fdec64 fd;
+  decimal64_t fd;
   fd.exponent = exp;
   fd.mantissa = output;
   return fd;
